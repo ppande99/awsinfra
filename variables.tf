@@ -32,11 +32,6 @@ variable "private_subnets" {
     "10.0.101.0/24",
     "10.0.102.0/24",
   ]
-
-  validation {
-    condition     = length(var.private_subnets) == length(var.public_subnets)
-    error_message = "private_subnets must be the same length as public_subnets."
-  }
 }
 
 variable "tags" {

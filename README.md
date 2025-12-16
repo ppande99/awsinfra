@@ -47,6 +47,22 @@ A GitHub Actions workflow (`.github/workflows/terraform.yml`) formats, validates
 - Pull requests and pushes to `main` automatically run `terraform fmt -check`, `terraform init`, `terraform validate`, and `terraform plan`, uploading the plan as an artifact.
 - To create/update resources from GitHub, trigger the workflow manually and set the `apply` input to `true`. The job will assume the configured IAM role, run `terraform init`, and then `terraform apply -auto-approve`.
 
+#### Quick steps to run the pipeline now
+1. Confirm the `AWS_OIDC_ROLE_ARN` secret is set (it should point to your OIDC-enabled IAM role).
+2. In GitHub, go to **Actions → Terraform → Run workflow**.
+3. Select the `main` branch, set **apply** to `true`, and click **Run workflow**.
+4. Watch the jobs complete. The `plan` job shows the proposed changes; the `apply` job provisions the VPC, subnets, gateways, and route tables.
+5. If you prefer the CLI, you can run the same dispatch from your local machine with the GitHub CLI (after `gh auth login`):
+   ```bash
+   gh workflow run Terraform --ref main -f apply=true
+   gh run watch
+   ```
+
+### Where to store AWS credentials for the workflow
+- GitHub Actions cannot use your local `~/.aws/credentials` profile. Provide credentials as repository or environment secrets instead.
+- Recommended: create an IAM role that trusts GitHub’s OIDC provider and store its ARN in the `AWS_OIDC_ROLE_ARN` repository secret (used by the workflow’s `configure-aws-credentials` step).
+- Alternative: if you must use static access keys, add `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and (if applicable) `AWS_SESSION_TOKEN` as encrypted secrets and adjust the `configure-aws-credentials` inputs accordingly. Avoid long-lived keys when possible.
+
 ## Outputs
 - `vpc_id`
 - `public_subnet_ids`

@@ -34,6 +34,13 @@ resource "aws_vpc" "main" {
   tags = merge(var.tags, {
     Name = "learning-vpc"
   })
+
+  lifecycle {
+    precondition {
+      condition     = length(var.private_subnets) == length(var.public_subnets)
+      error_message = "private_subnets must be the same length as public_subnets."
+    }
+  }
 }
 
 resource "aws_internet_gateway" "this" {
