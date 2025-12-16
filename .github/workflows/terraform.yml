@@ -9,7 +9,7 @@ on:
     inputs:
       apply:
         description: 'Run terraform apply (uses workflow-dispatch only)'
-        required: false
+        required: true
         default: 'false'
         type: choice
         options: ['false', 'true']
